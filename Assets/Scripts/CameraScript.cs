@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+// NOT BEING USED
 public class CameraScript : MonoBehaviour
 {
     public GameObject player;
