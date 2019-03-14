@@ -8,21 +8,33 @@ public class playerController : MonoBehaviour
     public float jumpSpeed;
     public GameObject mainCamera;
     public float speed;
+    public float projectileSpeed;
     public float maxSpeed;
     private Vector3 offset;
     private bool onGround = false;
     public PhysicsMaterial2D PlayerDefault;
     public PhysicsMaterial2D PlayerJump;
     public BoxCollider2D PlayerPhysicalHitbox;
-    public GameObject projectile;
+    public GameObject emit;
+    public Rigidbody2D projectile;
     public float time;
     private float timeTracker;
+    enum MovementState {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    }
+    private MovementState state;
+    private Vector3 statePosion;
     // Start is called before the first frame update
     void Start()
     {
         rgi = gameObject.GetComponent<Rigidbody2D>();
         offset = mainCamera.transform.position - transform.position;
         timeTracker = time;
+        state = MovementState.RIGHT;
+        statePosion = emit.transform.position - transform.position;
 
     }
 
@@ -32,9 +44,17 @@ public class playerController : MonoBehaviour
         print(onGround);
         if ( Input.GetKey("a") && !Input.GetKey("d") ) {
             rgi.AddForce(new Vector2(-speed, 0));
+            emit.transform.position = transform.position - statePosion;
+            state = MovementState.LEFT;
         }  
         if (Input.GetKey("d") && !Input.GetKey("a")) {
             rgi.AddForce(new Vector2(speed, 0));
+            state = MovementState.RIGHT;
+            emit.transform.position = transform.position + statePosion;
+        }
+        if (Input.GetKey("w") && !Input.GetKey("s") ) {
+            state = MovementState.UP;
+            emit.transform.position = new Vector3(transform.position.x, transform.position.y + statePosion.y, 0);
         }
         mainCamera.transform.position = mainCamera.transform.position + offset; 
         
@@ -50,10 +70,14 @@ public class playerController : MonoBehaviour
         timeTracker -= Time.deltaTime;
         //print(timeTracker);
         if ( timeTracker <= 0.0f) { timeTracker = 0.0f;  }
+
         if ( Input.GetKey("e")) {
             
             if (timeTracker <= 0.0f) {
-                Instantiate(projectile, (new Vector3(transform.position.x + 1, transform.position.y, 0)), Quaternion.identity);
+                Rigidbody2D ip = Instantiate(projectile, emit.transform.position, Quaternion.identity) as Rigidbody2D;
+                if ( state == MovementState.RIGHT ) { ip.velocity = new Vector2(projectileSpeed, 0); }
+                if ( state == MovementState.LEFT ) { ip.velocity = new Vector2(-projectileSpeed, 0); }
+                if ( state == MovementState.UP ) { ip.velocity = new Vector2(0, projectileSpeed); } 
                 timeTracker = time;
             }
 
@@ -76,4 +100,5 @@ public class playerController : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision) {
         onGround = false; 
     }
+
 }
