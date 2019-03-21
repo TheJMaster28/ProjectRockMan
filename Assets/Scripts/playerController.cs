@@ -41,7 +41,7 @@ public class playerController : MonoBehaviour
         timeTracker = time;
         state = MovementState.RIGHT;
         statePosion = emit.transform.position - transform.position;
-        
+        rgi.velocity = Vector2.zero;
 
     }
 
@@ -59,25 +59,30 @@ public class playerController : MonoBehaviour
         }
 
         //print(onGround);
-        if ( Input.GetKey("a") && !Input.GetKey("d") ) {
+        if ( Input.GetKey("a") && !Input.GetKey("d") && onGround) {
             rgi.AddForce(new Vector2(-speed, 0));
             emit.transform.position = transform.position - statePosion;
             state = MovementState.LEFT;
         }  
-        if (Input.GetKey("d") && !Input.GetKey("a")) {
+        if (Input.GetKey("d") && !Input.GetKey("a") && onGround ) {
             rgi.AddForce(new Vector2(speed, 0));
             state = MovementState.RIGHT;
             emit.transform.position = transform.position + statePosion;
         }
-        if (Input.GetKey("w") && !Input.GetKey("s") ) {
+        if (Input.GetKey("w") && !Input.GetKey("s") && onGround ) {
             state = MovementState.UP;
             emit.transform.position = new Vector3(transform.position.x, transform.position.y + statePosion.y, 0);
         }
+        if ( !Input.GetKey("w") && !Input.GetKey("a") && !Input.GetKey("s") && !Input.GetKey("d") && onGround) {
+            rgi.velocity = rgi.velocity * new Vector2(0.9f, 1);
+            if (rgi.velocity.x < 0.5f)
+                rgi.velocity.Set(0,rgi.velocity.y);
+        }
         mainCamera.transform.position = mainCamera.transform.position + offset; 
         // pause at some point
-        if ( Input.GetKeyDown("esc") ) {
+        //if ( Input.GetKeyDown("esc") ) {
 
-        }
+       // }
         if ( Input.GetKeyDown("space") && onGround) {
             rgi.AddForce(new Vector2(0, jumpSpeed));
         } 
