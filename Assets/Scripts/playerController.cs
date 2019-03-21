@@ -27,21 +27,38 @@ public class playerController : MonoBehaviour
     }
     private MovementState state;
     private Vector3 statePosion;
+    public GameObject respawn;
+    private int lifes;
+    private int health;
+
     // Start is called before the first frame update
     void Start()
     {
+        lifes = 3;
+        health = 10;
         rgi = gameObject.GetComponent<Rigidbody2D>();
         offset = mainCamera.transform.position - transform.position;
         timeTracker = time;
         state = MovementState.RIGHT;
         statePosion = emit.transform.position - transform.position;
+        
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        print(onGround);
+        print(lifes);
+        if ( lifes == 0 ) {
+            transform.position = respawn.transform.position;
+            lifes = 3;
+        }
+        if ( transform.position.y <= -10 ) {
+            transform.position = respawn.transform.position;
+            lifes--;
+        }
+
+        //print(onGround);
         if ( Input.GetKey("a") && !Input.GetKey("d") ) {
             rgi.AddForce(new Vector2(-speed, 0));
             emit.transform.position = transform.position - statePosion;
@@ -57,7 +74,10 @@ public class playerController : MonoBehaviour
             emit.transform.position = new Vector3(transform.position.x, transform.position.y + statePosion.y, 0);
         }
         mainCamera.transform.position = mainCamera.transform.position + offset; 
-        
+        // pause at some point
+        if ( Input.GetKeyDown("esc") ) {
+
+        }
         if ( Input.GetKeyDown("space") && onGround) {
             rgi.AddForce(new Vector2(0, jumpSpeed));
         } 
