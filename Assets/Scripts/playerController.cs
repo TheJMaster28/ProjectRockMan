@@ -30,6 +30,7 @@ public class playerController : MonoBehaviour
     public GameObject respawn;
     private int lifes;
     private int health;
+    private float tempSpeed;
 
     // Start is called before the first frame update
     void Start()
@@ -42,7 +43,7 @@ public class playerController : MonoBehaviour
         state = MovementState.RIGHT;
         statePosion = emit.transform.position - transform.position;
         rgi.velocity = Vector2.zero;
-
+        tempSpeed = 0;
     }
 
     // Update is called once per frame
@@ -60,12 +61,15 @@ public class playerController : MonoBehaviour
 
         //print(onGround);
         if ( Input.GetKey("a") && !Input.GetKey("d") && onGround) {
-            rgi.AddForce(new Vector2(-speed, 0));
+            // rgi.AddForce(new Vector2(-speed, 0));
+            //tempSpeed = tempSpeed + ( )
+            rgi.velocity = new Vector2(-speed, 0);
             emit.transform.position = transform.position - statePosion;
             state = MovementState.LEFT;
         }  
         if (Input.GetKey("d") && !Input.GetKey("a") && onGround ) {
-            rgi.AddForce(new Vector2(speed, 0));
+            //rgi.AddForce(new Vector2(speed, 0));
+            rgi.velocity = new Vector2(speed, 0);
             state = MovementState.RIGHT;
             emit.transform.position = transform.position + statePosion;
         }
